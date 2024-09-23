@@ -1,12 +1,13 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const TransactionForm = ({ transaction, onSubmit, onCancel }) => {
-  const { register, handleSubmit, setValue } = useForm({
-    defaultValues: transaction || { date: '', description: '', amount: '', category: '' }
+  const { register, handleSubmit, control, setValue } = useForm({
+    defaultValues: transaction || { date: new Date(), description: '', amount: '', category: '' }
   });
 
   React.useEffect(() => {
@@ -19,10 +20,16 @@ const TransactionForm = ({ transaction, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <Input
-        type="date"
-        {...register('date', { required: true })}
-        placeholder="Date"
+      <Controller
+        name="date"
+        control={control}
+        render={({ field }) => (
+          <DatePicker
+            placeholderText="Select date"
+            onChange={(date) => field.onChange(date)}
+            selected={field.value}
+          />
+        )}
       />
       <Input
         {...register('description', { required: true })}
@@ -42,6 +49,7 @@ const TransactionForm = ({ transaction, onSubmit, onCancel }) => {
           <SelectItem value="Income">Income</SelectItem>
           <SelectItem value="Utilities">Utilities</SelectItem>
           <SelectItem value="Shopping">Shopping</SelectItem>
+          <SelectItem value="Housing">Housing</SelectItem>
         </SelectContent>
       </Select>
       <div className="flex justify-end space-x-2">
