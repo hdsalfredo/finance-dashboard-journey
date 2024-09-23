@@ -1,18 +1,19 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const BudgetForm = ({ item, onSubmit, onCancel }) => {
-  const { register, handleSubmit, setValue } = useForm({
-    defaultValues: item || { category: '', amount: '', type: 'expense' }
+  const { register, handleSubmit, control, setValue } = useForm({
+    defaultValues: item || { category: '', amount: '', type: 'expense', date: new Date() }
   });
 
   React.useEffect(() => {
     if (item) {
       Object.keys(item).forEach(key => {
-        setValue(key, item[key]);
+        setValue(key, key === 'date' ? new Date(item[key]) : item[key]);
       });
     }
   }, [item, setValue]);
@@ -37,6 +38,17 @@ const BudgetForm = ({ item, onSubmit, onCancel }) => {
           <SelectItem value="income">Income</SelectItem>
         </SelectContent>
       </Select>
+      <Controller
+        name="date"
+        control={control}
+        render={({ field }) => (
+          <DatePicker
+            placeholderText="Select date"
+            onChange={(date) => field.onChange(date)}
+            selected={field.value}
+          />
+        )}
+      />
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
         <Button type="submit">Save</Button>
