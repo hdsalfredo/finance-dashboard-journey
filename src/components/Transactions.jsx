@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowUpDown, Search } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ArrowUpDown, Search, Plus, Edit, Trash } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import TransactionForm from './TransactionForm';
 
-// Mock function to fetch transactions
+// Mock API functions (replace with actual API calls in a real application)
 const fetchTransactions = async () => {
-  // In a real app, this would be an API call
+  // Simulating API call
   return [
     { id: 1, date: '2023-03-15', description: 'Grocery Shopping', amount: -120.50, category: 'Food' },
     { id: 2, date: '2023-03-14', description: 'Salary Deposit', amount: 3000.00, category: 'Income' },
@@ -18,14 +19,60 @@ const fetchTransactions = async () => {
   ];
 };
 
+const addTransaction = async (newTransaction) => {
+  // Simulating API call
+  console.log('Adding transaction:', newTransaction);
+  return { id: Date.now(), ...newTransaction };
+};
+
+const updateTransaction = async (updatedTransaction) => {
+  // Simulating API call
+  console.log('Updating transaction:', updatedTransaction);
+  return updatedTransaction;
+};
+
+const deleteTransaction = async (id) => {
+  // Simulating API call
+  console.log('Deleting transaction:', id);
+  return id;
+};
+
 const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [currentTransaction, setCurrentTransaction] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { data: transactions, isLoading, error } = useQuery({
     queryKey: ['transactions'],
     queryFn: fetchTransactions,
+  });
+
+  const addMutation = useMutation({
+    mutationFn: addTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['transactions']);
+      setIsFormOpen(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['transactions']);
+      setIsFormOpen(false);
+      setCurrentTransaction(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['transactions']);
+    },
   });
 
   if (isLoading) return <div>Loading transactions...</div>;
@@ -44,6 +91,25 @@ const Transactions = () => {
     }
     return 0;
   });
+
+  const handleFormSubmit = (data) => {
+    if (currentTransaction) {
+      updateMutation.mutate({ ...currentTransaction, ...data });
+    } else {
+      addMutation.mutate(data);
+    }
+  };
+
+  const handleEdit = (transaction) => {
+    setCurrentTransaction(transaction);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -78,6 +144,18 @@ const Transactions = () => {
           </Button>
         </div>
       </div>
+      <Button onClick={() => { setCurrentTransaction(null); setIsFormOpen(true); }} className="mb-4">
+        <Plus className="mr-2 h-4 w-4" /> Add Transaction
+      </Button>
+      {isFormOpen && (
+        <div className="mb-4">
+          <TransactionForm
+            transaction={currentTransaction}
+            onSubmit={handleFormSubmit}
+            onCancel={() => { setIsFormOpen(false); setCurrentTransaction(null); }}
+          />
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -85,6 +163,7 @@ const Transactions = () => {
             <TableHead>Description</TableHead>
             <TableHead>Category</TableHead>
             <TableHead className="text-right">Amount</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -95,6 +174,14 @@ const Transactions = () => {
               <TableCell>{transaction.category}</TableCell>
               <TableCell className={`text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
                 ${Math.abs(transaction.amount).toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <Button variant="ghost" size="icon" onClick={() => handleEdit(transaction)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => handleDelete(transaction.id)}>
+                  <Trash className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
