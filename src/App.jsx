@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import Transactions from './components/Transactions';
 import BudgetPlanner from './components/BudgetPlanner';
+import Settings from './components/Settings';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/budget-planner" element={<BudgetPlanner />} />
-            <Route path="/settings" element={<h1>Settings Page</h1>} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </Layout>
       </Router>
