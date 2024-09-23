@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import Transactions from './components/Transactions';
+import BudgetPlanner from './components/BudgetPlanner';
 
 const queryClient = new QueryClient();
 
@@ -17,7 +18,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
-            <Route path="/budget-planner" element={<h1>Budget Planner Page</h1>} />
+            <Route path="/budget-planner" element={<BudgetPlanner />} />
             <Route path="/settings" element={<h1>Settings Page</h1>} />
           </Routes>
         </Layout>
