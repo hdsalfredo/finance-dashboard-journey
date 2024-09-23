@@ -1,8 +1,9 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { navItems } from "./nav-items";
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
 
 const queryClient = new QueryClient();
 
@@ -10,13 +11,16 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <BrowserRouter>
-        <Routes>
-          {navItems.map(({ to, page }) => (
-            <Route key={to} path={to} element={page} />
-          ))}
-        </Routes>
-      </BrowserRouter>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/transactions" element={<h1>Transactions Page</h1>} />
+            <Route path="/budget-planner" element={<h1>Budget Planner Page</h1>} />
+            <Route path="/settings" element={<h1>Settings Page</h1>} />
+          </Routes>
+        </Layout>
+      </Router>
     </TooltipProvider>
   </QueryClientProvider>
 );
