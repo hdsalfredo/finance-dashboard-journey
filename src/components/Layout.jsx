@@ -1,8 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Receipt, PiggyBank, Settings, Search, Bell, User } from 'lucide-react';
 
 const Layout = ({ children }) => {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -11,19 +15,19 @@ const Layout = ({ children }) => {
           <h1 className="text-2xl font-bold text-blue-600">Finanta.</h1>
         </div>
         <nav className="mt-8">
-          <Link to="/" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+          <Link to="/" className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200 ${isActive('/') ? 'bg-gray-200' : ''}`}>
             <LayoutDashboard className="mr-3 h-5 w-5" />
             Dashboard
           </Link>
-          <Link to="/transactions" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+          <Link to="/transactions" className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200 ${isActive('/transactions') ? 'bg-gray-200' : ''}`}>
             <Receipt className="mr-3 h-5 w-5" />
             Transactions
           </Link>
-          <Link to="/budget-planner" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+          <Link to="/budget-planner" className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200 ${isActive('/budget-planner') ? 'bg-gray-200' : ''}`}>
             <PiggyBank className="mr-3 h-5 w-5" />
             Budget Planner
           </Link>
-          <Link to="/settings" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+          <Link to="/settings" className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200 ${isActive('/settings') ? 'bg-gray-200' : ''}`}>
             <Settings className="mr-3 h-5 w-5" />
             Settings
           </Link>
@@ -47,7 +51,7 @@ const Layout = ({ children }) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           {children}
         </main>
       </div>
