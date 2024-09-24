@@ -24,14 +24,15 @@ const AccountSettings = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Manage Accounts</h2>
-      <div className="flex space-x-2">
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
         <Input
           type="text"
           value={newAccount}
           onChange={(e) => setNewAccount(e.target.value)}
           placeholder="New account name"
+          className="w-full sm:w-auto"
         />
-        <Button onClick={addAccount}><Plus className="mr-2 h-4 w-4" /> Add Account</Button>
+        <Button onClick={addAccount} className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" /> Add Account</Button>
       </div>
       <ul className="space-y-2">
         {accounts.map(account => (

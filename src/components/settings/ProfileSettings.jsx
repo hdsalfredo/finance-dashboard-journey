@@ -23,12 +23,12 @@ const ProfileSettings = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Profile Settings</h2>
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
         <Avatar className="h-20 w-20">
           <AvatarImage src={profile.avatar} alt={profile.name} />
           <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
         </Avatar>
-        <Button>Change Avatar</Button>
+        <Button className="w-full sm:w-auto">Change Avatar</Button>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -40,6 +40,7 @@ const ProfileSettings = () => {
             value={profile.name}
             onChange={handleChange}
             required
+            className="mt-1"
           />
         </div>
         <div>
@@ -51,9 +52,10 @@ const ProfileSettings = () => {
             value={profile.email}
             onChange={handleChange}
             required
+            className="mt-1"
           />
         </div>
-        <Button type="submit">Save Changes</Button>
+        <Button type="submit" className="w-full sm:w-auto">Save Changes</Button>
       </form>
     </div>
   );

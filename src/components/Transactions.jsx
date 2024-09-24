@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DatePicker } from "@/components/ui/date-picker";
 import TransactionForm from './TransactionForm';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Mock API functions (replace with actual API calls in a real application)
 const fetchTransactions = async () => {
@@ -120,94 +121,106 @@ const Transactions = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Transactions</h1>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2">
-          <Input
-            type="text"
-            placeholder="Search transactions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-64"
-          />
-          <Search className="text-gray-400" />
+    <Card>
+      <CardHeader>
+        <CardTitle>Transactions</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="w-full sm:w-auto flex items-center space-x-2">
+              <Input
+                type="text"
+                placeholder="Search transactions..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-64"
+              />
+              <Search className="text-gray-400" />
+            </div>
+            <Button onClick={() => { setCurrentTransaction(null); setIsFormOpen(true); }}>
+              <Plus className="mr-2 h-4 w-4" /> Add Transaction
+            </Button>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <DatePicker
+                selected={startDate}
+                onChange={setStartDate}
+                placeholderText="Start Date"
+                className="w-full sm:w-40"
+              />
+              <DatePicker
+                selected={endDate}
+                onChange={setEndDate}
+                placeholderText="End Date"
+                className="w-full sm:w-40"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">Date</SelectItem>
+                  <SelectItem value="amount">Amount</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          {isFormOpen && (
+            <div className="mb-4">
+              <TransactionForm
+                transaction={currentTransaction}
+                onSubmit={handleFormSubmit}
+                onCancel={() => { setIsFormOpen(false); setCurrentTransaction(null); }}
+              />
+            </div>
+          )}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{transaction.date}</TableCell>
+                    <TableCell>{transaction.description}</TableCell>
+                    <TableCell>{transaction.category}</TableCell>
+                    <TableCell className={`text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                      ${Math.abs(transaction.amount).toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(transaction)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(transaction.id)}>
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <DatePicker
-            selected={startDate}
-            onChange={setStartDate}
-            placeholderText="Start Date"
-            className="w-40"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={setEndDate}
-            placeholderText="End Date"
-            className="w-40"
-          />
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date">Date</SelectItem>
-              <SelectItem value="amount">Amount</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      <Button onClick={() => { setCurrentTransaction(null); setIsFormOpen(true); }} className="mb-4">
-        <Plus className="mr-2 h-4 w-4" /> Add Transaction
-      </Button>
-      {isFormOpen && (
-        <div className="mb-4">
-          <TransactionForm
-            transaction={currentTransaction}
-            onSubmit={handleFormSubmit}
-            onCancel={() => { setIsFormOpen(false); setCurrentTransaction(null); }}
-          />
-        </div>
-      )}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedTransactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{transaction.date}</TableCell>
-              <TableCell>{transaction.description}</TableCell>
-              <TableCell>{transaction.category}</TableCell>
-              <TableCell className={`text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
-                ${Math.abs(transaction.amount).toFixed(2)}
-              </TableCell>
-              <TableCell>
-                <Button variant="ghost" size="icon" onClick={() => handleEdit(transaction)}>
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(transaction.id)}>
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

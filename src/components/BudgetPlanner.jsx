@@ -6,6 +6,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import BudgetForm from './BudgetForm';
 import BudgetTable from './BudgetTable';
 import { fetchBudgetItems, addBudgetItem, updateBudgetItem, deleteBudgetItem } from '../api/budgetApi';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const BudgetPlanner = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -71,42 +72,50 @@ const BudgetPlanner = () => {
   if (error) return <div>Error loading budget items: {error.message}</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Budget Planner</h1>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2">
-          <DatePicker
-            selected={startDate}
-            onChange={setStartDate}
-            placeholderText="Start Date"
-            className="w-40"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={setEndDate}
-            placeholderText="End Date"
-            className="w-40"
-          />
+    <Card>
+      <CardHeader>
+        <CardTitle>Budget Planner</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <DatePicker
+                selected={startDate}
+                onChange={setStartDate}
+                placeholderText="Start Date"
+                className="w-full sm:w-40"
+              />
+              <DatePicker
+                selected={endDate}
+                onChange={setEndDate}
+                placeholderText="End Date"
+                className="w-full sm:w-40"
+              />
+            </div>
+            <Button onClick={() => { setCurrentItem(null); setIsFormOpen(true); }}>
+              <Plus className="mr-2 h-4 w-4" /> Add Budget Item
+            </Button>
+          </div>
+          {isFormOpen && (
+            <div className="mb-4">
+              <BudgetForm
+                item={currentItem}
+                onSubmit={handleFormSubmit}
+                onCancel={() => { setIsFormOpen(false); setCurrentItem(null); }}
+              />
+            </div>
+          )}
+          <div className="overflow-x-auto">
+            <BudgetTable
+              items={filteredItems}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
         </div>
-        <Button onClick={() => { setCurrentItem(null); setIsFormOpen(true); }}>
-          <Plus className="mr-2 h-4 w-4" /> Add Budget Item
-        </Button>
-      </div>
-      {isFormOpen && (
-        <div className="mb-4">
-          <BudgetForm
-            item={currentItem}
-            onSubmit={handleFormSubmit}
-            onCancel={() => { setIsFormOpen(false); setCurrentItem(null); }}
-          />
-        </div>
-      )}
-      <BudgetTable
-        items={filteredItems}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

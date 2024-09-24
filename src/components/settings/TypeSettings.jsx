@@ -24,14 +24,15 @@ const TypeSettings = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Manage Types</h2>
-      <div className="flex space-x-2">
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
         <Input
           type="text"
           value={newType}
           onChange={(e) => setNewType(e.target.value)}
           placeholder="New type name"
+          className="w-full sm:w-auto"
         />
-        <Button onClick={addType}><Plus className="mr-2 h-4 w-4" /> Add Type</Button>
+        <Button onClick={addType} className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" /> Add Type</Button>
       </div>
       <ul className="space-y-2">
         {types.map(type => (
