@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Receipt, PiggyBank, Settings, Search, Bell, User } from 'lucide-react';
+import { LayoutDashboard, Receipt, PiggyBank, Settings, Search, Bell, User, Menu } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md">
+      <aside className={`w-64 bg-white shadow-md lg:block ${isSidebarOpen ? 'block' : 'hidden'} absolute inset-y-0 left-0 z-50 lg:relative`}>
         <div className="p-4">
           <h1 className="text-2xl font-bold text-blue-600">Finanta.</h1>
         </div>
@@ -39,9 +43,14 @@ const Layout = ({ children }) => {
         {/* Navbar */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-6 py-3">
-            <div className="flex items-center bg-gray-100 rounded-md px-3 py-2">
-              <Search className="h-5 w-5 text-gray-500" />
-              <input type="text" placeholder="Search..." className="ml-2 bg-transparent focus:outline-none" />
+            <div className="flex items-center">
+              <Button variant="ghost" size="icon" className="lg:hidden mr-2" onClick={toggleSidebar}>
+                <Menu className="h-6 w-6" />
+              </Button>
+              <div className="flex items-center bg-gray-100 rounded-md px-3 py-2">
+                <Search className="h-5 w-5 text-gray-500" />
+                <input type="text" placeholder="Search..." className="ml-2 bg-transparent focus:outline-none" />
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <Bell className="h-6 w-6 text-gray-500" />
